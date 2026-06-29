@@ -16,14 +16,14 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^16.4.7",
-    "ethers": "^6.13.5",
+    "ethers": "^6.17.0",
     "lucide-react": "^0.469.0",
-    "next": "15.1.11",
+    "next": "15.1.12",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
-    "thirdweb": "^5.83.1"
+    "thirdweb": "^5.88.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
