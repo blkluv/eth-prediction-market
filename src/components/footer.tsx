@@ -1,4 +1,3 @@
-import { Github } from 'lucide-react';
 import Link from 'next/link';
 
 export function Footer() {
@@ -9,33 +8,18 @@ export function Footer() {
           <p className='text-center text-sm leading-loose text-muted-foreground md:text-left'>
             Built by{' '}
             <Link
-              href='https://twitter.com/yourusername'
+              href='https://tiktok.com/@PredicTok'
               target='_blank'
               rel='noreferrer'
-              className='font-medium underline underline-offset-4'
+              className='font-medium underline underline-offset-4 hover:text-foreground'
             >
-              your-name
-            </Link>
-            . The source code is available on{' '}
-            <Link
-              href='https://github.com/yourusername/your-repo'
-              target='_blank'
-              rel='noreferrer'
-              className='font-medium underline underline-offset-4'
-            >
-              GitHub
+              @PredicTok
             </Link>
             .
           </p>
         </div>
-        <div className='flex items-center gap-4'>
-          <Link
-            href='https://github.com/yourusername/your-repo'
-            target='_blank'
-            rel='noreferrer'
-          >
-            <Github className='h-5 w-5 text-muted-foreground hover:text-foreground' />
-          </Link>
+        <div className='text-sm text-muted-foreground'>
+          © {new Date().getFullYear()} All rights reserved.
         </div>
       </div>
     </footer>
