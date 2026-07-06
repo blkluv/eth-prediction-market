@@ -74,16 +74,18 @@ export function Navbar() {
   };
 
   return (
-    <div className='flex justify-between items-center mb-6'>
-      <h1 className='text-2xl font-bold'>BASE.YENO.BET</h1>
-      <div className='items-center flex gap-2'>
+    <div className='flex flex-wrap justify-between items-center gap-2 mb-4 sm:mb-6'>
+      <h1 className='text-xl sm:text-2xl font-bold text-foreground'>
+        BASE.YENO.BET
+      </h1>
+      <div className='flex flex-wrap items-center gap-2 sm:gap-3'>
         {account && (
           <>
-            <div className='text-sm'>
+            <div className='text-xs sm:text-sm text-foreground'>
               {isLoading
-                ? 'Loading balance...'
+                ? 'Loading...'
                 : isError
-                ? 'Error loading balance'
+                ? 'Balance error'
                 : `Balance: ${balanceData?.displayValue || '0'} ${
                     balanceData?.symbol || 'PMT'
                   }`}
@@ -92,10 +94,12 @@ export function Navbar() {
               onClick={handleClaimTokens}
               disabled={isClaimLoading}
               variant='outline'
+              size='sm'
+              className='text-xs sm:text-sm h-8 sm:h-9 text-foreground border-border hover:bg-accent'
             >
               {isClaimLoading ? (
                 <>
-                  <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                  <Loader2 className='mr-1 h-3 w-3 animate-spin' />
                   Claiming...
                 </>
               ) : (
@@ -104,37 +108,35 @@ export function Navbar() {
             </Button>
           </>
         )}
-        {
-          <ConnectButton
-            client={client}
-            theme={lightTheme()}
-            chain={sepolia}
-            supportedTokens={{
-              [sepolia.id]: [
-                {
-                  address: tokenAddress,
-                  symbol: 'PMT',
-                  name: 'Prediction Token',
-                },
-              ],
-            }}
-            connectButton={{
-              style: {
-                fontSize: '0.75rem !important',
-                height: '2.5rem !important',
+        <ConnectButton
+          client={client}
+          theme={lightTheme()}
+          chain={sepolia}
+          supportedTokens={{
+            [sepolia.id]: [
+              {
+                address: tokenAddress,
+                symbol: 'PMT',
+                name: 'Prediction Token',
               },
-              label: 'Sign In',
-            }}
-            detailsButton={{
-              displayBalanceToken: tokenAddress,
-            }}
-            wallets={[inAppWallet()]}
-            accountAbstraction={{
-              chain: sepolia,
-              sponsorGas: true,
-            }}
-          />
-        }
+            ],
+          }}
+          connectButton={{
+            style: {
+              fontSize: '0.7rem !important',
+              height: '2rem !important',
+            },
+            label: 'Sign In',
+          }}
+          detailsButton={{
+            displayBalanceToken: tokenAddress,
+          }}
+          wallets={[inAppWallet()]}
+          accountAbstraction={{
+            chain: sepolia,
+            sponsorGas: true,
+          }}
+        />
       </div>
     </div>
   );
