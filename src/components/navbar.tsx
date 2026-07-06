@@ -12,16 +12,25 @@ import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { tokenAddress } from '@/constants/contract';
-
-type ApiResponse = {
-  success: boolean;
-  message?: string;
-};
+import { useContract, useContractWrite } from 'thirdweb/react'; // ⬅️ added
 
 export function Navbar() {
   const account = useActiveAccount();
   const [isClaimLoading, setIsClaimLoading] = useState(false);
   const { toast } = useToast();
+
+  // Get contract instance
+  const { contract } = useContract({
+    address: tokenAddress,
+    chain: sepolia,
+    client,
+  });
+
+  // Hook for the claim function
+  const { mutateAsync: claimTokens, isPending } = useContractWrite({
+    contract,
+    method: 'claimTokens', // must match the contract function name
+  });
 
   const {
     data: balanceData,
@@ -35,39 +44,25 @@ export function Navbar() {
   });
 
   const handleClaimTokens = async () => {
+    if (!account?.address) {
+      toast({ title: 'No wallet connected', variant: 'destructive' });
+      return;
+    }
     setIsClaimLoading(true);
     try {
-      if (!account?.address) {
-        throw new Error('No account address available');
-      }
-
-      const resp = await fetch('/api/claimToken', {
-        method: 'POST',
-        body: JSON.stringify({ address: account.address }),
-        credentials: 'include',
-        mode: 'cors',
-      });
-
-      const respData: ApiResponse = await resp.json();
-
-      if (!resp.ok) {
-        throw new Error(respData.message || 'Failed to claim tokens');
-      }
-
+      await claimTokens();
       toast({
         title: 'Tokens Claimed!',
-        description: 'Your tokens have been successfully claimed.',
+        description: '100 PMT have been minted to your wallet.',
         duration: 5000,
       });
-    } catch (error: unknown) {
+    } catch (error: any) {
       toast({
         title: 'Claim Failed',
-        description:
-          error instanceof Error
-            ? error.message
-            : 'There was an error claiming tokens.',
+        description: error?.message || 'Transaction reverted. Check console.',
         variant: 'destructive',
       });
+      console.error('Claim error:', error);
     } finally {
       setIsClaimLoading(false);
     }
@@ -90,10 +85,10 @@ export function Navbar() {
             </div>
             <Button
               onClick={handleClaimTokens}
-              disabled={isClaimLoading}
+              disabled={isClaimLoading || isPending}
               variant='outline'
             >
-              {isClaimLoading ? (
+              {isClaimLoading || isPending ? (
                 <>
                   <Loader2 className='mr-2 h-4 w-4 animate-spin' />
                   Claiming...
@@ -104,37 +99,35 @@ export function Navbar() {
             </Button>
           </>
         )}
-        {
-          <ConnectButton
-            client={client}
-            theme={lightTheme()}
-            chain={sepolia}
-            supportedTokens={{
-              [sepolia.id]: [
-                {
-                  address: tokenAddress,
-                  symbol: 'PMT',
-                  name: 'Prediction Token',
-                },
-              ],
-            }}
-            connectButton={{
-              style: {
-                fontSize: '0.75rem !important',
-                height: '2.5rem !important',
+        <ConnectButton
+          client={client}
+          theme={lightTheme()}
+          chain={sepolia}
+          supportedTokens={{
+            [sepolia.id]: [
+              {
+                address: tokenAddress,
+                symbol: 'PMT',
+                name: 'Prediction Token',
               },
-              label: 'Sign In',
-            }}
-            detailsButton={{
-              displayBalanceToken: tokenAddress,
-            }}
-            wallets={[inAppWallet()]}
-            accountAbstraction={{
-              chain: sepolia,
-              sponsorGas: true,
-            }}
-          />
-        }
+            ],
+          }}
+          connectButton={{
+            style: {
+              fontSize: '0.75rem !important',
+              height: '2.5rem !important',
+            },
+            label: 'Sign In',
+          }}
+          detailsButton={{
+            displayBalanceToken: tokenAddress,
+          }}
+          wallets={[inAppWallet()]}
+          accountAbstraction={{
+            chain: sepolia,
+            sponsorGas: true,
+          }}
+        />
       </div>
     </div>
   );
